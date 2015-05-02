@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "description": "Fly around and shoot rocks with lasers and stuff.",
   "main": "server.js",
+  "engines": {
+    "node": "0.12.x"
+  },
   "scripts": {
     "test": "grunt lint",
     "start": "node server.js"
@@ -15,7 +18,6 @@
   "license": "MIT",
   "dependencies": {
     "express": "^4.12.3",
-    "socket.io": "^1.3.5",
     "ws": "^0.7.1"
   },
   "devDependencies": {

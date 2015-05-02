@@ -11,7 +11,7 @@ var app = express();
 app.use(express.static(__dirname + '/'));
 
 var httpServer = http.createServer(app);
-httpServer.listen(process.env.port || 8080);
+httpServer.listen(process.env.PORT || 8080);
 
 var socketServer = new ws.Server({server: httpServer});
 spacerocks.server.attach(socketServer);

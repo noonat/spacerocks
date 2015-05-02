@@ -400,11 +400,11 @@ game = (function() {
     BUTTON_RIGHT: 1,
     BUTTON_THRUST: 2,
     BUTTON_FIRE: 3,
-    dt: 0,                        // Seconds elapsed since the last frame.
-    time: 0,                      // Current time (absolute), in seconds.
-    lastTime: 0,                  // Time of the last frame.
-    width: 1280,                  // Width of the game world.
-    height: 720                   // Height of the game world.
+    dt: 0,                          // Seconds elapsed since the last frame.
+    time: 0,                        // Current time (absolute), in seconds.
+    lastTime: 0,                    // Time of the last frame.
+    width: 1280,                    // Width of the game world.
+    height: 720                     // Height of the game world.
   };
 
   //
