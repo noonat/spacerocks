@@ -1,0 +1,27 @@
+{
+  "name": "spacerocks",
+  "version": "0.1.0",
+  "description": "Fly around and shoot rocks with lasers and stuff.",
+  "main": "server.js",
+  "scripts": {
+    "test": "grunt lint",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@gist.github.com:ed561103903ffaf4c3d6.git"
+  },
+  "author": "Nathan Ostgard",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.12.3",
+    "socket.io": "^1.3.5",
+    "ws": "^0.7.1"
+  },
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-cli": "^0.1.13",
+    "grunt-contrib-jshint": "^0.11.2",
+    "grunt-jscs": "^1.8.0"
+  }
+}

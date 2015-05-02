@@ -1,0 +1,11 @@
+{
+  "indent": 2,
+  "maxcomplexity": false,
+  "maxdepth": false,
+  "maxparams": false,
+  "maxstatements": false,
+  "plusplus": false,
+  "browser": true,
+  "devel": true,
+  "globals": {}
+}
