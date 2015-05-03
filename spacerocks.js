@@ -1067,25 +1067,30 @@ local = (function() {
         _this.onResize(element.innerWidth, element.innerHeight);
       }, false);
 
-      var host = window.location.origin.replace(/^http/, 'ws');
-      _this.socket = new WebSocket(host);
-      if (_this.socket.transport) {
-        _this.socket.connect();
-        _this.socket.on('connect', function() {
-          _this.init(element.innerWidth, element.innerHeight);
-        });
-        _this.socket.on('message', function(message) {
-          _this.onMessage(message);
-        });
-        _this.socket.on('close', function() {
-          _this.socket.connect();
-        });
-      } else {
-        _this.loopback = true;
-        _this.broadcast = function() {};
-        _this.init(element.innerWidth, element.innerHeight);
-      }
+      _this.connect(window.location.origin.replace(/^http/, 'ws'), element);
     }, false);
+  };
+
+  exports.connect = function(host, element) {
+    var _this = this;
+    if (host && host.match(/^ws:/)) {
+      _this.socket = new WebSocket(host);
+      _this.socket.onopen = function() {
+        _this.socket.connected = true;
+        _this.init(element.innerWidth, element.innerHeight);
+      };
+      _this.socket.onclose = function() {
+        _this.socket.connected = false;
+        _this.connect(host, element);
+      };
+      _this.socket.onmessage = function(message) {
+        _this.onMessage(message.data);
+      };
+    } else {
+      this.loopback = true;
+      this.broadcast = function() {};
+      this.init(element.innerWidth, element.innerHeight);
+    }
   };
 
   // Initialize the local renderer. This is called automatically when
