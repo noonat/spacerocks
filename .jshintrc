@@ -4,6 +4,7 @@
   "maxdepth": false,
   "maxparams": false,
   "maxstatements": false,
+  "newcap": false,
   "plusplus": false,
   "browser": true,
   "devel": true,
