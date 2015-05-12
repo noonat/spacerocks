@@ -8,14 +8,14 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     jscs: {
-      main: ['*.js']
+      main: ['src/**/*.js']
     },
     jshint: {
       options: {
         jshintrc: true
       },
       files: {
-        src: ['*.js']
+        src: ['src/**/*.js']
       }
     }
   });
