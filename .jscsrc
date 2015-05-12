@@ -65,5 +65,6 @@
   "disallowPaddingNewlinesInBlocks": true,
   "excludeFiles": [
     "vendor/**"
-  ]
+  ],
+  "esnext": true
 }

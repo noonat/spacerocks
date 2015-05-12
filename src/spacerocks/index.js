@@ -1,8 +1,8 @@
-/* jshint node: true */
+import * as entities from './entities';
+import * as game from './game';
+import * as local from './local';
+import * as network from './network';
+import * as server from './server';
+import * as util from './util';
 
-exports.entities = require('./entities');
-exports.game = require('./game');
-exports.local = require('./local');
-exports.network = require('./network');
-exports.server = require('./server');
-exports.util = require('./util');
+export {entities, game, local, network, server, util};

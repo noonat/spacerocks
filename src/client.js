@@ -1,6 +1,5 @@
-/* jshint node: true */
 'use strict';
 
-var spacerocks = require('./spacerocks');
+import {local} from './spacerocks';
 
-spacerocks.local.attach(window);
+local.attach(window);

@@ -1,13 +1,12 @@
 // Vector text rendering helpers.
 
-/* jshint node: true */
 'use strict';
 
-var game = require('./game');
-var local = require('./local');
+import * as game from './game';
+import * as local from './local';
 
 // This is a big object containing arrays of lines for each letter / number.
-exports.chars = {
+export const chars = {
   'A': [
     [0.0, 1.0,
      0.0, 0.25,
@@ -253,16 +252,16 @@ exports.chars = {
 };
 
 // Draw an individual character.
-exports.drawChar = function(ch, x, y, w, h) {
-  var lines = this.chars[ch];
+export function drawChar(ch, x, y, w, h) {
+  let lines = chars[ch];
   if (!lines) {
     return;
   }
-  for (var i = 0, il = lines.length; i < il; ++i) {
-    var line = lines[i];
-    for (var j = 0, jl = line.length; j < jl; j += 2) {
-      var px = x + line[j + 0] * w;
-      var py = y + line[j + 1] * h;
+  for (let i = 0, il = lines.length; i < il; i++) {
+    let line = lines[i];
+    for (let j = 0, jl = line.length; j < jl; j += 2) {
+      let px = x + line[j + 0] * w;
+      let py = y + line[j + 1] * h;
       if (j === 0) {
         local.context.moveTo(px, py);
       } else {
@@ -270,24 +269,23 @@ exports.drawChar = function(ch, x, y, w, h) {
       }
     }
   }
-};
+}
 
 // Draw a string of characters.
-exports.drawString = function(string, x, y, charWidth, charSpacing,
-                              charHeight) {
+export function drawString(string, x, y, charWidth, charSpacing, charHeight) {
   string = string.toUpperCase();
-  for (var i = 0, il = string.length; i < il; ++i) {
-    var ch = string.charAt(i);
-    this.drawChar(ch, x + (i * charSpacing), y, charWidth, charHeight);
+  for (let i = 0, il = string.length; i < il; i++) {
+    let ch = string.charAt(i);
+    drawChar(ch, x + (i * charSpacing), y, charWidth, charHeight);
   }
-};
+}
 
 // Draw a string of characters, centered horizontally and vertically.
-exports.drawCenteredString = function(string, charWidth, charSpacing,
-                                      charHeight, x, y) {
+export function drawCenteredString(string, charWidth, charSpacing, charHeight,
+                                   x, y) {
   x = x || 0;
   y = y || 0;
   x += (game.width - (charSpacing * (string.length - 1) + charWidth)) / 2;
   y += (game.height - charHeight) / 2;
-  return this.drawString(string, x, y, charWidth, charSpacing, charHeight);
-};
+  return drawString(string, x, y, charWidth, charSpacing, charHeight);
+}

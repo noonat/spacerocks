@@ -7,46 +7,46 @@
 // lot with villian's struct.coffee, but would need to add support for floats
 // and doubles.
 
-/* jshint node: true */
 'use strict';
 
-var jspack = require('jspack').jspack;
+import {jspack} from 'jspack';
 
 var packets = {};
 var packetsByName = {};
 var packetIndex = 0;
 
 // Define a simple static-length packet.
-exports.definePacket = function(name, format, keys) {
-  var packet;
+export function definePacket(name, format, keys) {
+  let packet;
 
   function _pack(values) {
     return jspack.Pack(packet.format, values);
   }
 
   function _unpack(bytes) {
-    var object = {packet: packet};
-    var keys = packet.keys;
-    var values = jspack.Unpack(packet.format, bytes);
+    let object = {packet: packet};
+    let keys = packet.keys;
+    let values = jspack.Unpack(packet.format, bytes);
     if (values) {
-      for (var i = 0, il = keys.length; i < il; ++i) {
+      for (let i = 0, il = keys.length; i < il; i++) {
         object[keys[i]] = values[i];
       }
     }
     return object;
   }
-  packet = this.defineCustomPacket(name, _pack, _unpack);
+
+  packet = defineCustomPacket(name, _pack, _unpack);
   packet.format = format;
   packet.keys = keys;
   return packet;
-};
+}
 
 // Define a complex variable-length packet, with its own custom pack and
 // unpack functions. This is used for packets like point updates, where we
 // don't know up front how long they will be.
 // FIXME: If jspack could do a streaming need this wouldn't be needed.
-exports.defineCustomPacket = function(name, pack, unpack) {
-  var packet = {
+export function defineCustomPacket(name, pack, unpack) {
+  let packet = {
     index: ++packetIndex,
     name: name,
     pack: pack,
@@ -55,99 +55,98 @@ exports.defineCustomPacket = function(name, pack, unpack) {
   packets[packetIndex] = packet;
   packetsByName[packet.name] = packet;
   return packet;
-};
+}
 
 // Get a packet object by its numeric index.
-exports.getPacketByIndex = function(index) {
+export function getPacketByIndex(index) {
   if (packets.hasOwnProperty(index)) {
     return packets[index];
   } else {
     return undefined;
   }
-};
+}
 
 // Get a packet object by its string name.
-exports.getPacketByName = function(name) {
+export function getPacketByName(name) {
   if (packetsByName.hasOwnProperty(name)) {
     return packetsByName[name];
   } else {
     return undefined;
   }
-};
+}
 
 // Byte pack multiple arguments into a string.
-exports.packMessage = function(name, values) {
-  var packet = this.getPacketByName(name);
+export function packMessage(name, values) {
+  let packet = getPacketByName(name);
   if (!packet) {
     throw new Error('Invalid packet name "' + name + '"');
   }
   values.unshift(packet.index);
-  var bytes = packet.pack.call(packet, values);
-  var message = '';
-  for (var i = 0, il = bytes.length; i < il; ++i) {
+  let bytes = packet.pack.call(packet, values);
+  let message = '';
+  for (let i = 0, il = bytes.length; i < il; i++) {
     message += String.fromCharCode(bytes[i]);
   }
   return message;
-};
+}
 
 // Unpack a string into an object.
-exports.unpackMessage = function(message) {
-  var i, il, bytes, packet, object, keys, values;
-  bytes = [];
-  for (i = 0, il = message.length; i < il; ++i) {
+export function unpackMessage(message) {
+  let bytes = [];
+  for (let i = 0, il = message.length; i < il; i++) {
     bytes[i] = message.charCodeAt(i);
   }
-  values = jspack.Unpack('B', bytes);
+  let values = jspack.Unpack('B', bytes);
   if (!values) {
     return undefined;
   }
-  packet = this.getPacketByIndex(values[0]);
+  let packet = getPacketByIndex(values[0]);
   if (packet) {
     return packet.unpack(bytes);
   }
   return undefined;
-};
+}
 
 // Server telling the client what their player id is.
-exports.definePacket('ack', 'BLL', [
+definePacket('ack', 'BLL', [
   'packetIndex',
   'playerId',
   'version'
 ]);
 
 // Server telling the client what their ship's entity id is.
-exports.definePacket('ackShip', 'BLL', [
+definePacket('ackShip', 'BLL', [
   'packetIndex',
   'playerId',
   'entityId'
 ]);
 
 // A new player has connected to the server.
-exports.definePacket('connected', 'BL', [
+definePacket('connected', 'BL', [
   'packetIndex',
   'playerId'
 ]);
 
 // A player has disconnected from the server.
-exports.definePacket('disconnected', 'BL', [
+definePacket('disconnected', 'BL', [
   'packetIndex',
   'playerId'
 ]);
 
 // Client telling the server that they are pressing a button.
-exports.definePacket('buttonDown', 'BB', [
+definePacket('buttonDown', 'BB', [
   'packetIndex',
   'button'
 ]);
 
 // Client telling the server that they have released a button.
-exports.definePacket('buttonUp', 'BB', [
+definePacket('buttonUp', 'BB', [
   'packetIndex',
   'button'
 ]);
 
 // Server to client update for an existing entity.
-exports.definePacket('entity', 'BLdddddd', [
+definePacket('entity', 'BLdddddd', [
   'packetIndex',
   'entityId',
   'x', 'y',
@@ -157,33 +156,33 @@ exports.definePacket('entity', 'BLdddddd', [
 ]);
 
 // Server telling client that an existing entity has died.
-exports.definePacket('entityDied', 'BL', [
+definePacket('entityDied', 'BL', [
   'packetIndex',
   'entityId'
 ]);
 
 // Server telling client what the polygonal shape is for an entity.
-exports.defineCustomPacket('entityPoints', function _packPoints(values) {
-  var format = 'BLL';
-  var i = values.length - 3;
+defineCustomPacket('entityPoints', function _packPoints(values) {
+  let format = 'BLL';
+  let i = values.length - 3;
   while (i--) {
     format += 'd';
   }
   return jspack.Pack(format, values);
 }, function _unpackPoints(bytes) {
-  var format = 'BLL';
-  var values = jspack.Unpack(format, bytes);
+  let format = 'BLL';
+  let values = jspack.Unpack(format, bytes);
   if (!values) {
     return undefined;
   }
-  var object = {
+  let object = {
     packet: this,
     packetIndex: values[0],
     entityId: values[1],
     points: null,
     pointsLength: values[2]
   };
-  var i = object.pointsLength;
+  let i = object.pointsLength;
   while (i--) {
     format += 'd';
   }
@@ -197,20 +196,20 @@ exports.defineCustomPacket('entityPoints', function _packPoints(values) {
 
 // Server telling client that a new entity has spawned. This also includes
 // the points for that new entity.
-exports.defineCustomPacket('entitySpawned', function _packSpawned(values) {
-  var format = 'BBLddddddL';
-  var i = values.length - 10;
+defineCustomPacket('entitySpawned', function _packSpawned(values) {
+  let format = 'BBLddddddL';
+  let i = values.length - 10;
   while (i--) {
     format += 'd';
   }
   return jspack.Pack(format, values);
 }, function _unpackSpawned(bytes) {
-  var format = 'BBLddddddL';
-  var values = jspack.Unpack(format, bytes);
+  let format = 'BBLddddddL';
+  let values = jspack.Unpack(format, bytes);
   if (!values) {
     return undefined;
   }
-  var object = {
+  let object = {
     packet: this,
     packetIndex: values[0],
     entityType: values[1],
@@ -224,7 +223,7 @@ exports.defineCustomPacket('entitySpawned', function _packSpawned(values) {
     points: null,
     pointsLength: values[9]
   };
-  var i = object.pointsLength;
+  let i = object.pointsLength;
   while (i--) {
     format += 'd';
   }

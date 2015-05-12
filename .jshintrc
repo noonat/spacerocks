@@ -1,12 +1,14 @@
 {
+  "browser": true,
+  "devel": true,
+  "esnext": true,
+  "globals": {},
   "indent": 2,
   "maxcomplexity": false,
   "maxdepth": false,
   "maxparams": false,
   "maxstatements": false,
   "newcap": false,
-  "plusplus": false,
-  "browser": true,
-  "devel": true,
-  "globals": {}
+  "node": true,
+  "plusplus": false
 }
