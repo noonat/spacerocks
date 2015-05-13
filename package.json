@@ -23,6 +23,7 @@
     "browserify-middleware": "^5.0.2",
     "express": "^4.12.3",
     "jspack": "0.0.4",
+    "wrtc": "0.0.55",
     "ws": "^0.7.1"
   },
   "devDependencies": {
