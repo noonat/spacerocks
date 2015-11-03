@@ -49,7 +49,9 @@ export class Entity {
   die() {
     this.dead = true;
     if (game.server) {
-      game.server.broadcast('entityDied', [this.id]);
+      game.server.broadcast('entityDied', {
+        entityId: this.id
+      });
     }
   }
 
@@ -162,10 +164,10 @@ export class Entity {
     }
     this.updateRadius();
     if (game.server && broadcast !== false) {
-      game.server.broadcast('entityPoints', [
-        this.id,
-        this.points.length
-      ].concat(this.points));
+      game.server.broadcast('entityPoints', {
+        entityId: this.id,
+        points: this.points
+      });
     }
   }
 
@@ -190,15 +192,17 @@ export class Entity {
       this.setScale(scale);
     }
     if (game.server) {
-      game.server.broadcast('entitySpawned', [
-        this.constructor.type,
-        this.id,
-        this.x, this.y,
-        this.vx, this.vy,
-        this.angle,
-        this.scale,
-        this.points.length
-      ].concat(this.points));
+      game.server.broadcast('entitySpawned', {
+        entityType: this.constructor.type,
+        entityId: this.id,
+        x: this.x,
+        y: this.y,
+        vx: this.vx,
+        vy: this.vy,
+        angle: this.angle,
+        scale: this.scale,
+        points: this.points
+      });
     }
   }
 
@@ -231,13 +235,15 @@ export class Entity {
     }
 
     if (game.server) {
-      game.server.broadcast('entity', [
-        this.id,
-        this.x, this.y,
-        this.vx, this.vy,
-        this.angle,
-        this.scale
-      ]);
+      game.server.broadcast('entity', {
+        entityId: this.id,
+        x: this.x,
+        y: this.y,
+        vx: this.vx,
+        vy: this.vy,
+        angle: this.angle,
+        scale: this.scale
+      });
     }
   }
 

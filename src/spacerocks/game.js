@@ -491,15 +491,15 @@ export class Player {
 
   // Called whenever we get new data for a player. This is triggered when
   // the server receives a network packet from the client.
-  onData(data) {
-    if (data && data.packet) {
-      switch (data.packet.name) {
+  onData(packet) {
+    if (packet && packet.key) {
+      switch (packet.key) {
         case 'buttonDown':
-          this.buttons[data.button] = true;
+          this.buttons[packet.data.button] = true;
           break;
 
         case 'buttonUp':
-          this.buttons[data.button] = false;
+          this.buttons[packet.data.button] = false;
           break;
       }
     }
@@ -512,7 +512,7 @@ export class Player {
 
   sendData(name, values) {
     if (this.socket) {
-      this.socket.send(network.packMessage(name, values));
+      this.socket.send(network.schema.stringify(name, values));
     }
   }
 
@@ -538,7 +538,10 @@ export class Player {
         this.ship = entities.create(Ship);
         this.ship.spawn();
         this.ship.player = this;
-        this.sendData('ackShip', [this.id, this.ship.id]);
+        this.sendData('ackShip', {
+          playerId: this.id,
+          entityId: this.ship.id
+        });
       }
     }
   }

@@ -19,31 +19,40 @@ export function attach(newServerSocket) {
     console.log('Player', player.id, 'connected (client',
       socket.sessionId, ')');
     player.socket = socket;
-    player.sendData('ack', [player.id, game.version]);
-    broadcast('connected', [player.id], player);
+    player.sendData('ack', {
+      playerId: player.id,
+      version: game.version
+    });
+    broadcast('connected', {
+      entityId: player.id
+    }, player);
     let entity;
     let all = entities.all;
     for (let i = 0, il = all.length; i < il; i++) {
       entity = all[i];
       if (entity && !entity.dead) {
-        player.sendData('entitySpawned', [
-          entity.constructor.type,
-          entity.id,
-          entity.x, entity.y,
-          entity.vx, entity.vy,
-          entity.angle,
-          entity.scale,
-          entity.points.length
-        ].concat(entity.points));
+        player.sendData('entitySpawned', {
+          entityType: entity.constructor.type,
+          entityId: entity.id,
+          x: entity.x,
+          y: entity.y,
+          vx: entity.vx,
+          vy: entity.vy,
+          angle: entity.angle,
+          scale: entity.scale,
+          points: entity.points
+        });
       }
     }
     socket.on('close', () => {
       console.log('Player', player.id, 'disconnected');
       game.deletePlayer(player.id);
-      broadcast('disconnected', [player.id], player);
+      broadcast('disconnected', {
+        playerId: player.id
+      }, player);
     });
     socket.on('message', (message) => {
-      player.onData(network.unpackMessage(message));
+      player.onData(network.schema.parse(message));
     });
   });
   game.init(exports);
@@ -56,7 +65,7 @@ export function attach(newServerSocket) {
 
 // Send a network packet to everyone on the server.
 export function broadcast(name, values, exceptPlayers) {
-  let message = network.packMessage(name, values);
+  let message = network.schema.stringify(name, values);
   if (exceptPlayers && exceptPlayers instanceof game.Player) {
     exceptPlayers = [exceptPlayers];
   }

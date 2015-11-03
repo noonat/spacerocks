@@ -138,11 +138,15 @@ export function onKeyDown(keyCode) {
     }
     if (loopback) {
       player.onData({
-        packet: {name: 'buttonDown'},
-        button: button
+        key: 'buttonDown',
+        data: {
+          button: button
+        }
       });
     } else {
-      socket.send(network.packMessage('buttonDown', [button]));
+      socket.send(network.schema.stringify('buttonDown', {
+        button: button
+      }));
     }
     return true;
   } else {
@@ -161,11 +165,15 @@ export function onKeyUp(keyCode) {
     }
     if (loopback) {
       player.onData({
-        packet: {name: 'buttonUp'},
-        button: button
+        key: 'buttonUp',
+        data: {
+          button: button
+        }
       });
     } else {
-      socket.send(network.packMessage('buttonUp', [button]));
+      socket.send(network.schema.stringify('buttonUp', {
+        button: button
+      }));
     }
     return true;
   } else {
@@ -177,9 +185,10 @@ export function onKeyUp(keyCode) {
 // FIXME: It might make more sense for this to be in the game code.
 export function onMessage(message) {
   let entity;
-  let data = network.unpackMessage(message);
-  if (data && data.packet) {
-    switch (data.packet.name) {
+  let packet = network.schema.parse(message);
+  if (packet && packet.key && packet.data) {
+    let data = packet.data;
+    switch (packet.key) {
       case 'ack':
         if (game.version < data.version) {
           window.location.reload();
