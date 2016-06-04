@@ -31,16 +31,6 @@ export var keysMap = {        // Map of key codes to buttons.
 export var loopback = false;  // If true, play locally without a server.
 export var socket;            // Socket.IO connection to the server.
 
-// exports.attach = null;
-// exports.connect = null;
-// exports.init = null;
-// exports.drawTitle = null;
-// exports.update = null;
-// exports.onKeyDown = null;
-// exports.onKeyUp = null;
-// exports.onMessage = null;
-// exports.onResize = null;
-
 var player;
 
 // Attach event listeners and setup the local module. The element
@@ -67,6 +57,10 @@ export function attach(element) {
   }, false);
 }
 
+export function broadcast() {
+  // This is a no-op function, so this module's interface matches the server.
+}
+
 export function connect(host, element) {
   if (host && host.match(/^ws:/)) {
     socket = new WebSocket(host);
@@ -83,8 +77,18 @@ export function connect(host, element) {
     };
   } else {
     loopback = true;
-    // broadcast = function() {};
     init(element.innerWidth, element.innerHeight);
+  }
+}
+
+export function drawTitle() {
+  if (titleTimer > 0) {
+    titleTimer = Math.max(0, titleTimer - game.dt);
+    context.beginPath();
+    text.drawCenteredString('spacerocks', titleCharWidth, titleCharSpacing,
+                            titleCharHeight, 0, 0);
+    context.stroke();
+    context.closePath();
   }
 }
 
@@ -101,17 +105,6 @@ export function init(windowWidth, windowHeight) {
     }
     setTimeout(loop, 1000 / 30);
   })();
-}
-
-export function drawTitle() {
-  if (titleTimer > 0) {
-    titleTimer = Math.max(0, titleTimer - game.dt);
-    context.beginPath();
-    text.drawCenteredString('spacerocks', titleCharWidth, titleCharSpacing,
-                            titleCharHeight, 0, 0);
-    context.stroke();
-    context.closePath();
-  }
 }
 
 export function update() {
